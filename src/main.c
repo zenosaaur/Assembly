@@ -4,7 +4,8 @@
 
 
 #define superVisorCode "2244"
-
+// funzione per pulire il terminale
+#define clrscr() printf("\e[1;1H\e[2J")
 
 //TODO: Approfondire argomento
 int getch() {
@@ -34,6 +35,10 @@ int main(int argc, char *argv[])
     // l'argoment user/superVisor(2244)
     char *userParameter = argv[1];
     int isSuperVisor = 0;
+    // Counter del menu
+    int menuCounter = 0;
+    // array delle voci del menu
+    char* menuString[6] = {"Setting automobile:", "Data:", "Ora:","Blocco automatico porte:","Back-home:","Check olio"};
     // TODO: funzione in Assembly che preso in input due stringhe e le compara
     if (userParameter != NULL)
     {
@@ -58,10 +63,14 @@ int main(int argc, char *argv[])
             switch (getch())
             {
             case 'A':
-                printf("freccia in su\n");
+                clrscr();
+                menuCounter > 0 ? menuCounter-- : menuCounter;
+                printf("%s\n",menuString[menuCounter]); 
                 break;
             case 'B':
-                printf("freccia in giu\n");
+                clrscr();
+                menuCounter < 5  ? menuCounter++ : menuCounter;
+                printf("%s\n",menuString[menuCounter]); 
                 break;
             case 'C':
                 printf("freccia in destra\n");
