@@ -1,25 +1,20 @@
-.section .data
-    user: .string  "menu normale"
-    lenUser: .long . - user
-    new_line_char:.byte 10
 
+
+.section .data
+    user: .ascii  "menu normale"
+    lenUser: .long . - user
+    arrowA: .string "\033[A\010"
+    clear: .string "\033[1;1H\033[2J"
+    lenClear: .long . - clear
+    lenArrow: .long . - arrowA
+    new_line_char:.byte 10
 .section .text
 	.global menu
 	.type menu, @function
 
 menu:
-    movl $4, %eax
-	movl $1, %ebx
-	leal user, %ecx
-	movl lenUser, %edx
-	int $0x80
-
-    movl $4, %eax
-	movl $1, %ebx
-	leal new_line_char, %ecx
-	movl $1, %edx
-	int $0x80
-
+    call getArrow
+    
     movl $1, %eax
 	movl $0, %ebx
 	int $0x80

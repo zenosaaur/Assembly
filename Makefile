@@ -15,8 +15,11 @@ obj/menuSupervisor.o: src/menuSupervisor.s
 obj/isSupervisor.o: src/isSupervisor.s
 	as --32 -gstabs src/isSupervisor.s -o obj/isSupervisor.o
 
-bin/main: obj/menu.o obj/menuSupervisor.o obj/isSupervisor.o
-	ld -m elf_i386 obj/isSupervisor.o obj/menu.o obj/menuSupervisor.o -o bin/main
+obj/getArrow.o: src/getArrow.s
+	as --32 -gstabs src/getArrow.s -o obj/getArrow.o
+
+bin/main: obj/menu.o obj/menuSupervisor.o obj/isSupervisor.o obj/getArrow.o
+	ld -m elf_i386 obj/isSupervisor.o obj/getArrow.o obj/menu.o obj/menuSupervisor.o -o bin/main
 
 
 

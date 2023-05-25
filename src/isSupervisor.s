@@ -14,8 +14,9 @@ adminMenager:
     popl %ecx  /*Dominio: 2244(admin user), null*/
     testl %ecx, %ecx
     jz userRedirect
-    cmp %ecx, %ecx
+    cmp %ecx, supervisorCode
     je supervisorRedirect
+    jmp userRedirect
 supervisorRedirect:
 	call menuSupervisor
     jmp fine
