@@ -7,14 +7,11 @@ in caso contrario restituisce 0 */
 
 
 .section .data
-    arrowA: .long 65
-    arrowB: .long 66
-    arrowC: .long 67
-    arrowD: .long 68
+    test: .ascii "testA"
+    lenTest: .long . - test
     clear: .ascii "\033[1;1H\033[2J"
     input: .ascii ""
     lenClear: .long . - clear
-    lenArrow: .long . - arrowA
 .section .text
 	.global getArrow
 	.type getArrow, @function
@@ -42,18 +39,19 @@ getArrow:
         movl $1, %ebx
         leal input,%ecx  
         movl $1, %edx
+        int $0x80        
+
+        movl $3, %eax  
+        movl $1, %ebx
+        leal input,%ecx  
+        movl $1, %edx
         int $0x80
 
+        movl $10, %ebx
+        movl input, %eax
+        div %bl
+        subl $64,%eax
 
-        # idea 1 = A, 2 = B
-        cmpb arrowA,$65
-        je arrowAHandler
-        cmp arrowB,input
-        je arrowBHandler
-        cmp arrowC,input
-        je arrowDHandler
-        cmp arrowD,input
-        je arrowDHandler
 
         jmp fine
 
@@ -62,17 +60,3 @@ fine:
     pop %ebp
 
     ret
-
-
-arrowAHandler:
-        movb $1, %al
-        jmp fine
-arrowBHandler:
-        movb $2, %al
-        jmp fine
-arrowCHandler:
-        movb $3, %al
-        jmp fine
-arrowDHandler:
-        movb $4, %al
-        jmp fine

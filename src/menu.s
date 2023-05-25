@@ -3,10 +3,7 @@
 .section .data
     user: .ascii  "menu normale"
     lenUser: .long . - user
-    arrowA: .string "\033[A\010"
-    clear: .string "\033[1;1H\033[2J"
-    lenClear: .long . - clear
-    lenArrow: .long . - arrowA
+    freccia: .ascii "0"
     new_line_char:.byte 10
 .section .text
 	.global menu
@@ -14,7 +11,31 @@
 
 menu:
     call getArrow
-    
-    movl $1, %eax
-	movl $0, %ebx
-	int $0x80
+    addb %al, freccia
+    cmpb $49, freccia
+    je arrowAHandler
+    cmpb $50, freccia
+    je arrowBHandler    
+    cmpb $51, freccia
+    je arrowCHandler    
+    cmpb $52, freccia
+    je arrowDHandler
+
+fine:
+    ret
+
+
+
+arrowAHandler:
+        subb $1, freccia
+        jmp menu
+arrowBHandler:
+        subb $2, freccia
+        jmp fine
+arrowCHandler:
+        subb $3, freccia
+        jmp fine
+arrowDHandler:
+        subb $4, freccia
+        jmp fine
+
