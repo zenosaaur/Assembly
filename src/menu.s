@@ -18,6 +18,9 @@ loopArrow:
     call menuList
     call getArrow
     addb %al, freccia
+     
+    xorb %al,%al
+
     cmpb $49, freccia
     je arrowAHandler
     cmpb $50, freccia
@@ -26,7 +29,7 @@ loopArrow:
     je arrowCHandler    
     cmpb $52, freccia
     je arrowDHandler
-
+    jmp loopArrow
 fine:
     addl $4, %esp
     movl %ebp, %esp
@@ -39,20 +42,27 @@ arrowAHandler:
         subb $1, freccia
         # semplicemente verra incrementato un contatore che serve per scorrere i vari menu ricordarsi che sono ciclici
         cmpl $0,-4(%ebp)
-        je returnToButtom 
+        je returnToBottom 
         decl -4(%ebp)
         jmp loopArrow
-        returnToButtom:
+        returnToBottom:
             addl $5, -4(%ebp) 
             jmp loopArrow
 
 arrowBHandler:
         subb $2, freccia
-        # incremento del contatore 
+
+        cmpl $5,-4(%ebp)
+        je returnToTop 
+        incl -4(%ebp)
+        jmp loopArrow
+        returnToTop:
+            movl $0, -4(%ebp) 
+            jmp loopArrow
         jmp fine
 arrowCHandler:
         subb $3, freccia
-        # modifica una variabile che chiamata moreOptions
+        movl $1,%eax
         jmp loopArrow
 arrowDHandler:
         subb $4, freccia

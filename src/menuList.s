@@ -6,16 +6,21 @@
     menu1: .ascii  "Setting automobile\n"
     lenMenu1: .long . - menu1
     menu2: .ascii  "Data: 26/05/2023\n"
-        lenMenu2: .long . - menu2
+    lenMenu2: .long . - menu2
     menu3: .ascii  "Ora: 14:32\n"
-        lenMenu3: .long . - menu3
-    menu4: .ascii  "Blocco automatico porte:\n"
-        lenMenu4: .long . - menu4
+    lenMenu3: .long . - menu3
+    menu4: .ascii  "Blocco automatico porte:"
+    lenMenu4: .long . - menu4
     menu5: .string  "Back-home:\n"
-        lenMenu5: .long . - menu5
+    lenMenu5: .long . - menu5
     menu6: .ascii  "Check olio\n"
-        lenMenu6: .long . - menu6
-
+    lenMenu6: .long . - menu6
+    ON: .ascii "ON"
+    lenOn: .long . - ON
+    OFF: .ascii "OFF"
+    lenOff: .long . - OFF
+    newLine: .ascii "\n"
+    lenNewLine: .long . - newLine
 .section .text
 	.global menuList
 	.type menuList, @function
@@ -24,7 +29,8 @@
 menuList:
     push %ebp
     movl %esp, %ebp
-
+    addl $-4, %esp
+    movl %eax,-4(%ebp)
     movl 8(%ebp),%eax
     cmpl $0, %eax
     je counter0
@@ -66,6 +72,22 @@ counter3:
     leal menu4,%ecx  
     movl lenMenu4, %edx
     int $0x80
+    movl -4(%ebp), %eax
+    cmpb $1, %al
+    je moreOptions
+    jmp new_line
+    moreOptions: 
+        movl $4, %eax  
+        movl $1, %ebx
+        leal ON,%ecx  
+        movl lenOn, %edx
+        int $0x80
+    new_line:
+        movl $4, %eax  
+        movl $1, %ebx
+        leal newLine,%ecx  
+        movl lenNewLine, %edx
+        int $0x80
     jmp end
 counter4:
     movl $4, %eax  
@@ -82,6 +104,7 @@ counter5:
     int $0x80
     jmp end
 end:
+    addl $4, %esp
     movl %ebp, %esp
     pop %ebp
     ret
