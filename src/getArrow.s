@@ -7,8 +7,6 @@ in caso contrario restituisce 0 */
 
 
 .section .data
-    test: .ascii "testA"
-    lenTest: .long . - test
     clear: .ascii "\033[1;1H\033[2J"
     input: .ascii ""
     lenClear: .long . - clear
@@ -19,43 +17,54 @@ in caso contrario restituisce 0 */
 getArrow:
     push %ebp
     movl %esp, %ebp
-    # indice del loop aka int i = 0
-    mov $3, %ecx  
+    addl $-4, %esp
     scanArrow:
 
         movl $3, %eax  
-        movl $1, %ebx
+        movl $0, %ebx
         leal input,%ecx  
         movl $1, %edx
         int $0x80
         
         movl $3, %eax  
-        movl $1, %ebx
+        movl $0, %ebx
         leal input,%ecx  
         movl $1, %edx
         int $0x80
         
         movl $3, %eax  
-        movl $1, %ebx
-        leal input,%ecx  
-        movl $1, %edx
-        int $0x80        
-
-        movl $3, %eax  
-        movl $1, %ebx
+        movl $0, %ebx
         leal input,%ecx  
         movl $1, %edx
         int $0x80
-
-        movl $10, %ebx
+        
+        # salvo  il valore preso in input e gli sottraggo 64 e 
+        # non 63 cosi do non avere il regsitro a 0(valore di default )
         movl input, %eax
-        div %bl
         subl $64,%eax
+        # inseriesco l valore nello stack
+        movl %eax ,-4(%ebp)
+
+        # scanf per \n
+        movl $3, %eax  
+        movl $0, %ebx
+        leal input,%ecx  
+        movl $1, %edx
+        int $0x80
+
+
+        movl $4, %eax  
+        movl $1, %ebx
+        leal clear,%ecx  
+        movl lenClear, %edx
+        int $0x80
 
 
         jmp fine
 
 fine:
+    # routine per svuotare lo stack
+    addl $4, %esp
     movl %ebp, %esp
     pop %ebp
 
