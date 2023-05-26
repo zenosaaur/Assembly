@@ -66,11 +66,20 @@ getArrow:
         je fine
 
     error:
+        movl $3, %eax  
+        movl $0, %ebx
+        leal input,%ecx  
+        movl $1, %edx
+        int $0x80
+        cmpl $10, input
         movl $0, -4(%ebp)
         jmp fine
         
 fine:
     # routine per svuotare lo stack
+    movl -4(%ebp), %eax
+    xorl %ecx, %ecx
+    xorl %edx, %edx
     addl $4, %esp
     movl %ebp, %esp
     pop %ebp
