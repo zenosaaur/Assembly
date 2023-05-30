@@ -9,15 +9,15 @@
     lenMenu2: .long . - menu2
     menu3: .ascii  "Ora: 14:32\n"
     lenMenu3: .long . - menu3
-    menu4: .ascii  "Blocco automatico porte:"
+    menu4: .ascii  "Blocco automatico porte"
     lenMenu4: .long . - menu4
     menu5: .string  "Back-home:\n"
     lenMenu5: .long . - menu5
     menu6: .ascii  "Check olio\n"
     lenMenu6: .long . - menu6
-    ON: .ascii "ON"
+    ON: .ascii ": ON\n"
     lenOn: .long . - ON
-    OFF: .ascii "OFF"
+    OFF: .ascii ": OFF\n"
     lenOff: .long . - OFF
     newLine: .ascii "\n"
     lenNewLine: .long . - newLine
@@ -29,8 +29,9 @@
 menuList:
     push %ebp
     movl %esp, %ebp
-    addl $-4, %esp
+    addl $-8, %esp
     movl %eax,-4(%ebp)
+    movl %ebx,-8(%ebp)
     movl 8(%ebp),%eax
     cmpl $0, %eax
     je counter0
@@ -67,21 +68,27 @@ counter2:
     int $0x80
     jmp end
 counter3:
+    # stampo la stringa 'Blocco automatica porte'
     movl $4, %eax  
     movl $1, %ebx
     leal menu4,%ecx  
     movl lenMenu4, %edx
     int $0x80
+    # se nel registro eax c'e il valore 1 vado nella fase di modifica
     movl -4(%ebp), %eax
     cmpb $1, %al
     je moreOptions
+    # vado a capo
     jmp new_line
-    moreOptions: 
-        movl $4, %eax  
-        movl $1, %ebx
-        leal ON,%ecx  
-        movl lenOn, %edx
-        int $0x80
+    moreOptions:
+        movl -8(%ebp), %eax
+        cmpl $1,%eax
+        je printOn
+        call printOFF
+        jmp end
+    printOn:
+        call printON
+        jmp end
     new_line:
         movl $4, %eax  
         movl $1, %ebx
@@ -107,4 +114,25 @@ end:
     addl $4, %esp
     movl %ebp, %esp
     pop %ebp
+    ret
+
+
+# utilities
+
+
+.type printON, @function	
+printON:
+    movl $4, %eax  
+    movl $1, %ebx
+    leal ON,%ecx  
+    movl lenOn, %edx
+    int $0x80
+    ret 
+.type printOFF, @function
+printOFF:
+    movl $4, %eax  
+    movl $1, %ebx
+    leal OFF,%ecx  
+    movl lenOff, %edx
+    int $0x80
     ret

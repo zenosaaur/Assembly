@@ -67,9 +67,7 @@ int main(int argc, char *argv[])
         // flag che serve per modificare l'impostazione
         // 0 no modifiche 1 modifiche
         int modify = 0;
-        char c = getch();
-        printf("Size of char: %zu byte\n", sizeof(c));
-        if (getch() == 'a')
+        if (getch() == '\e')
         {
             getch();
             switch (getch())
@@ -78,7 +76,7 @@ int main(int argc, char *argv[])
                 clrscr();
                 if (!moreDetails)
                 {
-                    menuCounter > 0 ? menuCounter-- : menuCounter;
+                    menuCounter > 0 ? menuCounter-- : menuCounter++;
                 }else{
                     modify = 1;
                 }
