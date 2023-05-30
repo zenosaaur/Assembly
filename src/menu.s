@@ -6,6 +6,7 @@
     freccia: .ascii "0"
     porte: .long 0
     moreOption: .long 0
+    backHome: .long 0
 .section .text
 	.global menu
 	.type menu, @function
