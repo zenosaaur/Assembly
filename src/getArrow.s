@@ -27,7 +27,7 @@ getArrow:
         int $0x80
         cmpl $27, input 
         je scanArrow2
-        jmp error
+        jmp scanArrow1
         
     scanArrow2:#controllo carattere '['
         movl $3, %eax  
@@ -37,7 +37,7 @@ getArrow:
         int $0x80
         cmpl $91, input 
         je scanArrow3
-        jmp error
+        jmp scanArrow1
         
     scanArrow3:
         movl $3, %eax  
@@ -47,18 +47,20 @@ getArrow:
         int $0x80
         cmpl $65, input 
         jge subCntrl
-        jl error
+        jmp scanArrow1
+
     subCntrl:
         cmpl $68, input
-        jg error  
+        jg scanArrow1  
         # salvo  il valore preso in input e gli sottraggo 64 e 
         # non 63 cosi do non avere il regsitro a 0(valore di default )
         movl input, %eax
         subl $64, %eax
         # inseriesco l valore nello stack
         movl %eax,-4(%ebp)
-    
-        # scanf per \n
+        jmp backspace
+        
+    backspace:# scanf per \n
         movl $3, %eax  
         movl $0, %ebx
         leal input,%ecx  
@@ -66,17 +68,7 @@ getArrow:
         int $0x80
         cmpl $10, input
         je fine
-        jmp error
-
-    error:
-        movl $3, %eax  
-        movl $0, %ebx
-        leal input,%ecx  
-        movl $1, %edx
-        int $0x80
-        cmpl $10, input
-        movl $0, -4(%ebp)
-        jmp fine
+        jmp scanArrow1
         
 fine:
     # routine per svuotare lo stack
