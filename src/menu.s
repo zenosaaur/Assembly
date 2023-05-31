@@ -16,6 +16,7 @@ menu:
     movl %esp, %ebp
     # riservo spazio per le varaibili 
     addl $-4, %esp
+    # questo e lo spazio dedeicato all contatore del menu
     movl $0, -4(%ebp)
 loopArrow:
     call menuList
@@ -82,7 +83,14 @@ arrowBHandler:
 arrowCHandler:
         subb $3, freccia
         movl $1,%eax
-        movl porte , %ebx
+        # se il contatore dello stack è:
+        #   -  3 entro nel menu delle porte
+        #   -  4 entro nel menu back home
+        cmpl $4, -4(%ebp)
+        moreOptionPorte:
+            movl porte , %ebx
+        moreOptionBack:
+            movl backHome , %ebx
         movl %eax, moreOption
         jmp loopArrow
 arrowDHandler:

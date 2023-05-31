@@ -11,7 +11,7 @@
     lenMenu3: .long . - menu3
     menu4: .ascii  "Blocco automatico porte"
     lenMenu4: .long . - menu4
-    menu5: .string  "Back-home:\n"
+    menu5: .string  "Back-home"
     lenMenu5: .long . - menu5
     menu6: .ascii  "Check olio\n"
     lenMenu6: .long . - menu6
@@ -74,35 +74,15 @@ counter3:
     leal menu4,%ecx  
     movl lenMenu4, %edx
     int $0x80
-    # se nel registro eax c'e il valore 1 vado nella fase di modifica
-    movl -4(%ebp), %eax
-    cmpb $1, %al
-    je moreOptions
-    # vado a capo
-    jmp new_line
-    moreOptions:
-        movl -8(%ebp), %eax
-        cmpl $1,%eax
-        je printOn
-        call printOFF
-        jmp end
-    printOn:
-        call printON
-        jmp end
-    new_line:
-        movl $4, %eax  
-        movl $1, %ebx
-        leal newLine,%ecx  
-        movl lenNewLine, %edx
-        int $0x80
-    jmp end
+
+    call printMoreOption
 counter4:
     movl $4, %eax  
     movl $1, %ebx
     leal menu5,%ecx  
     movl lenMenu5, %edx
     int $0x80
-    jmp end
+    call printMoreOption
 counter5:
     movl $4, %eax  
     movl $1, %ebx
@@ -136,3 +116,28 @@ printOFF:
     movl lenOff, %edx
     int $0x80
     ret
+.type printMoreOption, @function
+printMoreOption:
+    # se nel registro eax c'e il valore 1 vado nella fase di modifica
+    movl -4(%ebp), %eax
+    cmpb $1, %al
+    je moreOptions
+    # vado a capo
+    jmp new_line
+    moreOptions:
+        movl -8(%ebp), %eax
+        cmpl $1,%eax
+        je printOn
+        call printOFF
+        jmp end
+    printOn:
+        call printON
+        jmp end
+    new_line:
+        movl $4, %eax  
+        movl $1, %ebx
+        leal newLine,%ecx  
+        movl lenNewLine, %edx
+        int $0x80
+    jmp end
+
