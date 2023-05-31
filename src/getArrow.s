@@ -27,6 +27,7 @@ getArrow:
         int $0x80
         cmpl $27, input 
         je scanArrow2
+        jmp error
         
     scanArrow2:#controllo carattere '['
         movl $3, %eax  
@@ -36,6 +37,7 @@ getArrow:
         int $0x80
         cmpl $91, input 
         je scanArrow3
+        jmp error
         
     scanArrow3:
         movl $3, %eax  
@@ -55,7 +57,7 @@ getArrow:
         subl $64, %eax
         # inseriesco l valore nello stack
         movl %eax,-4(%ebp)
-        
+    
         # scanf per \n
         movl $3, %eax  
         movl $0, %ebx
@@ -64,6 +66,7 @@ getArrow:
         int $0x80
         cmpl $10, input
         je fine
+        jmp error
 
     error:
         movl $3, %eax  
