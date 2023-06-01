@@ -82,16 +82,22 @@ arrowBHandler:
         jmp fine
 arrowCHandler:
         subb $3, freccia
-        movl $1,%eax
         # se il contatore dello stack è:
         #   -  3 entro nel menu delle porte
         #   -  4 entro nel menu back home
+        cmpl $3, -4(%ebp)
+        je moreOptionPorte
         cmpl $4, -4(%ebp)
+        je moreOptionBack
+        jmp loopArrow
         moreOptionPorte:
+            movl $1,%eax
             movl porte , %ebx
+            movl %eax, moreOption
         moreOptionBack:
+            movl $1,%eax
             movl backHome , %ebx
-        movl %eax, moreOption
+            movl %eax, moreOption
         jmp loopArrow
 arrowDHandler:
         subb $4, freccia
