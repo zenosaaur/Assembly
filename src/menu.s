@@ -1,4 +1,5 @@
 
+.extern isSupervisor
 
 .section .data
     user: .ascii  "menu normale"
@@ -7,6 +8,9 @@
     porte: .long 0
     moreOption: .long 0
     backHome: .long 0
+    limitOfMenu: .long 5
+# importo la variabile esterna 
+
 .section .text
 	.global menu
 	.type menu, @function
@@ -18,6 +22,9 @@ menu:
     addl $-4, %esp
     # questo e lo spazio dedeicato all contatore del menu
     movl $0, -4(%ebp)
+    # cmpl $0,  isSupervisor
+    # je loopArrow
+    # movl $7, limitOfMenu
 loopArrow:
     call menuList
     call getArrow
@@ -104,4 +111,3 @@ arrowDHandler:
         movl $0, %eax
         movl %eax, moreOption
         jmp loopArrow
-

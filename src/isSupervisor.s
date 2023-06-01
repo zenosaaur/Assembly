@@ -1,5 +1,8 @@
 .section .data
-    supervisorCode: .string  "2244"
+    supervisorCode: .ascii  "2244\0"
+    .globl myVariable 
+        isSupervisor: .long 0 
+
 
 .section .text
     .global _start
@@ -14,8 +17,9 @@ adminMenager:
     popl %ecx  /*Dominio: 2244(admin user), null*/
     testl %ecx, %ecx
     jz userRedirect
-    cmp %ecx, supervisorCode
-    je supervisorRedirect
+    movl (%ecx), %eax
+    cmpl %eax, supervisorCode
+    movl $1, isSupervisor
     jmp userRedirect
 supervisorRedirect:
 	call menuSupervisor
