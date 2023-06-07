@@ -1,7 +1,7 @@
 .section .data
     supervisorCode: .ascii  "2244\0"
-    .globl myVariable 
-        isSupervisor: .long 0 
+    .global supervisor 
+        supervisor: .long 0 
 
 
 .section .text
@@ -19,14 +19,16 @@ adminMenager:
     jz userRedirect
     movl (%ecx), %eax
     cmpl %eax, supervisorCode
-    movl $1, isSupervisor
-    jmp userRedirect
-supervisorRedirect:
-	call menuSupervisor
-    jmp fine
+    je supervisorRedirect
 userRedirect:
+    movl $0, supervisor
 	call menu
     jmp fine
+supervisorRedirect:
+    movl $1, supervisor
+	call menu
+    jmp fine
+
 fine:
 	movl $1, %eax
 	movl $0, %ebx

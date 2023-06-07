@@ -58,9 +58,9 @@ menuList:
     cmpl $5, %eax
     je counter5
     cmpl $6, %eax
-    je counter4
+    je counter6
     cmpl $7, %eax
-    je counter5
+    je counter7
 
 counter0:
     movl $4, %eax  
@@ -109,15 +109,15 @@ counter5:
 counter6:
     movl $4, %eax  
     movl $1, %ebx
-    leal menu6,%ecx  
-    movl lenMenu6, %edx
+    leal menu7,%ecx  
+    movl lenMenu7, %edx
     int $0x80
     jmp end
 counter7:
     movl $4, %eax  
     movl $1, %ebx
-    leal menu6,%ecx  
-    movl lenMenu6, %edx
+    leal menu8,%ecx  
+    movl lenMenu8, %edx
     int $0x80
     jmp end
 end:

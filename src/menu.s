@@ -9,7 +9,6 @@
     moreOption: .long 0
     backHome: .long 0
     limitOfMenu: .long 5
-# importo la variabile esterna 
 
 .section .text
 	.global menu
@@ -22,9 +21,9 @@ menu:
     addl $-4, %esp
     # questo e lo spazio dedeicato all contatore del menu
     movl $0, -4(%ebp)
-    # cmpl $0,  isSupervisor
-    # je loopArrow
-    # movl $7, limitOfMenu
+    cmpl $0, supervisor
+    je loopArrow
+    movl $7, limitOfMenu
 loopArrow:
     call menuList
     call getArrow
@@ -60,26 +59,25 @@ menuIncrent:
         decl -4(%ebp)
         jmp loopArrow
         returnToBottom:
-            addl $5, -4(%ebp) 
+            movl limitOfMenu,%ecx
+            addl %ecx, -4(%ebp)
             jmp loopArrow
-modifyOption1:
-    movl $1, %eax
-    cmpl $1, porte
-    je decremtOption1
-    incremetOption1:
-        incl porte
-        movl $1,%ebx
-        jmp loopArrow
-    decremtOption1:
-        decl porte
-        xorl %ebx,%ebx
-        jmp loopArrow
-    
-
+        modifyOption1:
+            movl $1, %eax
+            cmpl $1, porte
+            je decremtOption1
+            incremetOption1:
+                incl porte
+                movl $1,%ebx
+                jmp loopArrow
+            decremtOption1:
+                decl porte
+                xorl %ebx,%ebx
+                jmp loopArrow
 arrowBHandler:
         subb $2, freccia
-
-        cmpl $5,-4(%ebp)
+        movl limitOfMenu,%ecx
+        cmpl %ecx,-4(%ebp)
         je returnToTop 
         incl -4(%ebp)
         jmp loopArrow
