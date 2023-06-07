@@ -15,6 +15,10 @@
     lenMenu5: .long . - menu5
     menu6: .ascii  "Check olio\n"
     lenMenu6: .long . - menu6
+    menu7: .string  "Frecce direzione\n"
+    lenMenu7: .long . - menu7
+    menu8: .ascii  "Reset pressione gomme\n"
+    lenMenu8: .long . - menu8
     ON: .ascii ": ON\n"
     lenOn: .long . - ON
     OFF: .ascii ": OFF\n"
@@ -24,6 +28,14 @@
 .section .text
 	.global menuList
 	.type menuList, @function
+
+
+/*
+Parametri:
+    - MoreOptions ----> %eax
+    - Porte/BackHome ----> %ebx
+    - isSupervisor ----> %ecx
+*/
 
 
 menuList:
@@ -45,6 +57,10 @@ menuList:
     je counter4
     cmpl $5, %eax
     je counter5
+    cmpl $6, %eax
+    je counter6
+    cmpl $7, %eax
+    je counter7
 
 counter0:
     movl $4, %eax  
@@ -88,6 +104,20 @@ counter5:
     movl $1, %ebx
     leal menu6,%ecx  
     movl lenMenu6, %edx
+    int $0x80
+    jmp end
+counter6:
+    movl $4, %eax  
+    movl $1, %ebx
+    leal menu7,%ecx  
+    movl lenMenu7, %edx
+    int $0x80
+    jmp end
+counter7:
+    movl $4, %eax  
+    movl $1, %ebx
+    leal menu8,%ecx  
+    movl lenMenu8, %edx
     int $0x80
     jmp end
 end:
