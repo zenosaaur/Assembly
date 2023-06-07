@@ -15,7 +15,7 @@
     lenMenu5: .long . - menu5
     menu6: .ascii  "Check olio\n"
     lenMenu6: .long . - menu6
-    menu7: .string  "Frecce direzione\n"
+    menu7: .string  "Frecce direzione: "
     lenMenu7: .long . - menu7
     menu8: .ascii  "Reset pressione gomme\n"
     lenMenu8: .long . - menu8
@@ -25,6 +25,7 @@
     lenOff: .long . - OFF
     newLine: .ascii "\n"
     lenNewLine: .long . - newLine
+    lampeggio: .ascii "3\n"
 .section .text
 	.global menuList
 	.type menuList, @function
@@ -91,14 +92,14 @@ counter3:
     movl lenMenu4, %edx
     int $0x80
 
-    call printMoreOption
+    call printMoreOptionONOFF
 counter4:
     movl $4, %eax  
     movl $1, %ebx
     leal menu5,%ecx  
     movl lenMenu5, %edx
     int $0x80
-    call printMoreOption
+    call printMoreOptionONOFF
 counter5:
     movl $4, %eax  
     movl $1, %ebx
@@ -112,14 +113,14 @@ counter6:
     leal menu7,%ecx  
     movl lenMenu7, %edx
     int $0x80
-    jmp end
+    call printMoreOptionFreccia
 counter7:
     movl $4, %eax  
     movl $1, %ebx
     leal menu8,%ecx  
     movl lenMenu8, %edx
     int $0x80
-    jmp end
+    call printMoreOptionFreccia
 end:
     addl $4, %esp
     movl %ebp, %esp
@@ -146,15 +147,24 @@ printOFF:
     movl lenOff, %edx
     int $0x80
     ret
-.type printMoreOption, @function
-printMoreOption:
+.type new_line, @function
+new_line:
+        movl $4, %eax  
+        movl $1, %ebx
+        leal newLine,%ecx  
+        movl lenNewLine, %edx
+        int $0x80
+        ret
+.type printMoreOptionONOFF, @function
+printMoreOptionONOFF:
     # se nel registro eax c'e il valore 1 vado nella fase di modifica
     movl -4(%ebp), %eax
     cmpb $1, %al
-    je moreOptions
+    je moreOptionsONOFF
     # vado a capo
-    jmp new_line
-    moreOptions:
+    call new_line
+    jmp end
+    moreOptionsONOFF:
         movl -8(%ebp), %eax
         cmpl $1,%eax
         je printOn
@@ -163,11 +173,19 @@ printMoreOption:
     printOn:
         call printON
         jmp end
-    new_line:
+
+.type printON, @function	
+printMoreOptionFreccia:
+    movl -4(%ebp), %eax
+    cmpb $1, %al
+    je moreOptionsFreccia
+    # vado a capo
+    call new_line
+    jmp end
+    moreOptionsFreccia:
         movl $4, %eax  
         movl $1, %ebx
-        leal newLine,%ecx  
-        movl lenNewLine, %edx
+        leal lampeggio,%ecx  
+        movl $2, %edx
         int $0x80
-    jmp end
-
+        jmp end

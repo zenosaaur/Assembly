@@ -6,6 +6,8 @@
     lenUser: .long . - user
     freccia: .ascii "0"
     porte: .long 0
+    frecce: .long 0
+    pressione: .long 0
     moreOption: .long 0
     backHome: .long 0
     limitOfMenu: .long 5
@@ -90,10 +92,16 @@ arrowCHandler:
         # se il contatore dello stack è:
         #   -  3 entro nel menu delle porte
         #   -  4 entro nel menu back home
+        #   -  6 entro nel menu freccia direzione
+        #   -  7 entro nel menu della pressione gomme
         cmpl $3, -4(%ebp)
         je moreOptionPorte
         cmpl $4, -4(%ebp)
         je moreOptionBack
+        cmpl $5, -4(%ebp)
+        je moreOptionFrecce
+        cmpl $6, -4(%ebp)
+        je moreOptionPressione
         jmp loopArrow
         moreOptionPorte:
             movl $1,%eax
@@ -102,6 +110,14 @@ arrowCHandler:
         moreOptionBack:
             movl $1,%eax
             movl backHome , %ebx
+            movl %eax, moreOption
+        moreOptionFrecce:
+            movl $1,%eax
+            movl frecce , %ebx
+            movl %eax, moreOption
+        moreOptionPressione:
+            movl $1,%eax
+            movl pressione , %ebx
             movl %eax, moreOption
         jmp loopArrow
 arrowDHandler:
