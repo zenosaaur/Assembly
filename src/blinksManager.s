@@ -13,7 +13,12 @@ blinkManagers:
     leal input,%ecx
     movl $1, %edx
     int $0x80
+    jmp cmpStart
+    /*cmpl $10, %eax
+    je fineBack
+    jg cmpStart*/
 
+cmpStart:
     movl input,%eax
     movl %eax,-4(%ebp)
     cmpl $50, input
@@ -36,6 +41,16 @@ max2:
 max5:
     movl $53, %eax
     jmp fine
+
+fineBack:
+    movl -4(%ebp) , %eax
+    # routine per svuotare lo stack
+    xorl %ecx, %ecx
+    xorl %edx, %edx
+    addl $4, %esp
+    movl %ebp, %esp
+    pop %ebp
+    ret
 
 fine:
     movl $3, %eax
