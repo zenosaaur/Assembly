@@ -47,6 +47,8 @@ loopArrow:
 blinks:
     call blinkManagers
     movl %eax,frecce
+    movl frecce,%ebx
+    movl $1,%eax
     jmp loopArrow   
 fine:
     addl $4, %esp
@@ -104,28 +106,31 @@ arrowCHandler:
         je moreOptionPorte
         cmpl $4, -4(%ebp)
         je moreOptionBack
-        cmpl $5, -4(%ebp)
-        je moreOptionFrecce
         cmpl $6, -4(%ebp)
+        je moreOptionFrecce
+        cmpl $7, -4(%ebp)
         je moreOptionPressione
         jmp loopArrow
         moreOptionPorte:
             movl $1,%eax
             movl porte , %ebx
             movl %eax, moreOption
+            jmp loopArrow
         moreOptionBack:
             movl $1,%eax
             movl backHome , %ebx
             movl %eax, moreOption
+            jmp loopArrow
         moreOptionFrecce:
             movl $1,%eax
             movl frecce , %ebx
             movl %eax, moreOption
+            jmp loopArrow
         moreOptionPressione:
             movl $1,%eax
             movl pressione , %ebx
             movl %eax, moreOption
-        jmp loopArrow
+            jmp loopArrow
 arrowDHandler:
         subb $4, freccia
         movl $0, %eax

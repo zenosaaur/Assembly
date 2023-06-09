@@ -25,7 +25,7 @@
     lenOff: .long . - OFF
     newLine: .ascii "\n"
     lenNewLine: .long . - newLine
-    lampeggio: .ascii "3\n"
+    lampeggio: .ascii "3"
 .section .text
 	.global menuList
 	.type menuList, @function
@@ -142,64 +142,95 @@ end:
 
 .type printON, @function
 printON:
+    push %ebp
+    movl %esp, %ebp
     movl $4, %eax
     movl $1, %ebx
     leal ON,%ecx
     movl lenOn, %edx
     int $0x80
+    movl %ebp, %esp
+    pop %ebp
     ret
 .type printOFF, @function
 printOFF:
+    push %ebp
+    movl %esp, %ebp
     movl $4, %eax
     movl $1, %ebx
     leal OFF,%ecx
     movl lenOff, %edx
     int $0x80
+    movl %ebp, %esp
+    pop %ebp
     ret
 .type new_line, @function
 new_line:
+        push %ebp
+        movl %esp, %ebp
         movl $4, %eax
         movl $1, %ebx
         leal newLine,%ecx
         movl lenNewLine, %edx
         int $0x80
+        movl %ebp, %esp
+        pop %ebp
         ret
 .type printMoreOptionONOFF, @function
 printMoreOptionONOFF:
+    push %ebp
+    movl %esp, %ebp
     # se nel registro eax c'e il valore 1 vado nella fase di modifica
-    movl -4(%ebp), %eax
+    movl 12(%ebp), %eax
     cmpb $1, %al
     je moreOptionsONOFF
     # vado a capo
     call new_line
+    movl %ebp, %esp
+    pop %ebp
     ret
     moreOptionsONOFF:
-        movl -8(%ebp), %eax
+        movl 8(%ebp), %eax
         cmpl $1,%eax
         je printOn
         call printOFF
+        movl %ebp, %esp
+        pop %ebp
         ret
     printOn:
         call printON
+        movl %ebp, %esp
+        pop %ebp
         ret
 
 .type printMoreOptionFreccia, @function
 printMoreOptionFreccia:
-    movl -4(%ebp), %eax
-    cmpb $1, %al
-    je moreOptionsFreccia
-    # vado a capo
-    call new_line
-    movl $0,%eax
-    ret
-    moreOptionsFreccia:
-        movl -8(%ebp),%ebx
-        movl $4, %eax
-        movl $1, %ebx
-        leal lampeggio,%ecx
-        movl $2, %edx
-        int $0x80
-
-        movl $1,%eax
-
+    push %ebp
+    movl %esp, %ebp
+    movl 12(%ebp),%ebx
+    cmpl $1, %ebx
+    je continue
+        call new_line
+        xorl %eax,%eax
+        movl %ebp, %esp
+        pop %ebp
         ret
+    continue:
+        movl 8(%ebp), %ebx
+        cmpl $0, %ebx
+        jg setBlinks
+        jmp moreOptionsFreccia
+    setBlinks:
+        movl %ebx, lampeggio
+        moreOptionsFreccia:
+            movl $4, %eax
+            movl $1, %ebx
+            leal lampeggio,%ecx
+            movl $1, %edx
+            int $0x80
+
+            call new_line
+            movl $1,%eax
+            movl %ebp, %esp
+            pop %ebp
+            ret
