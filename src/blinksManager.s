@@ -1,45 +1,54 @@
-.section .data
-    input: .ascii "0\n"
-    lenInput: .long . - input
+.section .bss
+    input: .skip 2
 .section .text
+	.global blinkManagers
+	.type blinkManagers, @function
+blinkManagers:
+    push %ebp
+    movl %esp, %ebp
+    addl $-4, %esp
 
-inserimento:
     movl $3, %eax
-    movl $1, %ebx
-    leal input, %ecx
-    movl lenInput, %edx
+    movl $0, %ebx
+    leal input,%ecx
+    movl $1, %edx
     int $0x80
-    cmp $2, %eax
+
+    movl input,%eax
+    movl %eax,-4(%ebp)
+    cmpl $50, input
     jl min2
     jg max2
     je equal2
 
 equal2:
-    movl %eax,-4(%ebp)
     jmp fine
 
 min2:
-    movl $2, %eax
+    movl $50, %eax
     jmp fine
 
 max2:
-    cmp $5, %eax
-    movl %eax,-4(%ebp)
+    cmpl $53, %eax
     jle fine
-    lg max5
+    jg max5
 
 max5:
-    movl $5, %eax
-    movl %eax,-4(%ebp)
+    movl $53, %eax
     jmp fine
-    
+
 fine:
+    movl $3, %eax
+    movl $0, %ebx
+    leal input, %ecx
+    movl $1, %edx
+    int $0x80
+
+    movl -4(%ebp) , %eax
     # routine per svuotare lo stack
-    movl -4(%ebp), %eax
     xorl %ecx, %ecx
     xorl %edx, %edx
     addl $4, %esp
     movl %ebp, %esp
     pop %ebp
-
     ret

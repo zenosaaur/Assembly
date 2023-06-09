@@ -64,64 +64,73 @@ menuList:
     je counter7
 
 counter0:
-    movl $4, %eax  
+    movl $4, %eax
     movl $1, %ebx
-    leal menu1,%ecx  
+    leal menu1,%ecx
     movl lenMenu1, %edx
     int $0x80
+    movl $0,%eax
     jmp end
 counter1:
-    movl $4, %eax  
+    movl $4, %eax
     movl $1, %ebx
-    leal menu2,%ecx  
+    leal menu2,%ecx
     movl lenMenu2, %edx
     int $0x80
+    movl $0,%eax
     jmp end
 counter2:
-    movl $4, %eax  
+    movl $4, %eax
     movl $1, %ebx
-    leal menu3,%ecx  
+    leal menu3,%ecx
     movl lenMenu3, %edx
     int $0x80
+    movl $0,%eax
     jmp end
 counter3:
     # stampo la stringa 'Blocco automatica porte'
-    movl $4, %eax  
+    movl $4, %eax
     movl $1, %ebx
-    leal menu4,%ecx  
+    leal menu4,%ecx
     movl lenMenu4, %edx
     int $0x80
-
     call printMoreOptionONOFF
+    movl $0,%eax
+    jmp end
 counter4:
-    movl $4, %eax  
+    movl $4, %eax
     movl $1, %ebx
-    leal menu5,%ecx  
+    leal menu5,%ecx
     movl lenMenu5, %edx
     int $0x80
     call printMoreOptionONOFF
+    movl $0,%eax
+    jmp end
 counter5:
-    movl $4, %eax  
+    movl $4, %eax
     movl $1, %ebx
-    leal menu6,%ecx  
+    leal menu6,%ecx
     movl lenMenu6, %edx
     int $0x80
+    movl $0,%eax
     jmp end
 counter6:
-    movl $4, %eax  
+    movl $4, %eax
     movl $1, %ebx
-    leal menu7,%ecx  
+    leal menu7,%ecx
     movl lenMenu7, %edx
     int $0x80
     call printMoreOptionFreccia
+    jmp end
 counter7:
-    movl $4, %eax  
+    movl $4, %eax
     movl $1, %ebx
-    leal menu8,%ecx  
+    leal menu8,%ecx
     movl lenMenu8, %edx
     int $0x80
-    call printMoreOptionFreccia
+    jmp end
 end:
+    xorl %ebx,%ebx
     addl $4, %esp
     movl %ebp, %esp
     pop %ebp
@@ -131,27 +140,27 @@ end:
 # utilities
 
 
-.type printON, @function	
+.type printON, @function
 printON:
-    movl $4, %eax  
+    movl $4, %eax
     movl $1, %ebx
-    leal ON,%ecx  
+    leal ON,%ecx
     movl lenOn, %edx
     int $0x80
-    ret 
+    ret
 .type printOFF, @function
 printOFF:
-    movl $4, %eax  
+    movl $4, %eax
     movl $1, %ebx
-    leal OFF,%ecx  
+    leal OFF,%ecx
     movl lenOff, %edx
     int $0x80
     ret
 .type new_line, @function
 new_line:
-        movl $4, %eax  
+        movl $4, %eax
         movl $1, %ebx
-        leal newLine,%ecx  
+        leal newLine,%ecx
         movl lenNewLine, %edx
         int $0x80
         ret
@@ -163,29 +172,34 @@ printMoreOptionONOFF:
     je moreOptionsONOFF
     # vado a capo
     call new_line
-    jmp end
+    ret
     moreOptionsONOFF:
         movl -8(%ebp), %eax
         cmpl $1,%eax
         je printOn
         call printOFF
-        jmp end
+        ret
     printOn:
         call printON
-        jmp end
+        ret
 
-.type printON, @function	
+.type printMoreOptionFreccia, @function
 printMoreOptionFreccia:
     movl -4(%ebp), %eax
     cmpb $1, %al
     je moreOptionsFreccia
     # vado a capo
     call new_line
-    jmp end
+    movl $0,%eax
+    ret
     moreOptionsFreccia:
-        movl $4, %eax  
+        movl -8(%ebp),%ebx
+        movl $4, %eax
         movl $1, %ebx
-        leal lampeggio,%ecx  
+        leal lampeggio,%ecx
         movl $2, %edx
         int $0x80
-        jmp end
+
+        movl $1,%eax
+
+        ret

@@ -4,12 +4,9 @@ da 1-4 in caso fosse premuto una freccia direzionale
 in caso contrario restituisce 0 */
 
 
+.section .bss
+    input: .skip 4
 
-
-.section .data
-    clear: .ascii "\033[1;1H\033[2J"
-    input: .ascii ""
-    lenClear: .long . - clear
 .section .text
 	.global getArrow
 	.type getArrow, @function

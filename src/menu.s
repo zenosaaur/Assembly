@@ -28,6 +28,8 @@ menu:
     movl $7, limitOfMenu
 loopArrow:
     call menuList
+    cmpl $1, %eax
+    je blinks
     call getArrow
     addb %al, freccia
      
@@ -42,6 +44,10 @@ loopArrow:
     cmpb $52, freccia
     je arrowDHandler
     jmp loopArrow
+blinks:
+    call blinkManagers
+    movl %eax,frecce
+    jmp loopArrow   
 fine:
     addl $4, %esp
     movl %ebp, %esp

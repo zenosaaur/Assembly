@@ -18,11 +18,14 @@ obj/isSupervisor.o: src/isSupervisor.s
 obj/getArrow.o: src/getArrow.s
 	as --32 -gstabs src/getArrow.s -o obj/getArrow.o
 
+obj/blinksManager.o: src/blinksManager.s
+	as --32 -gstabs src/blinksManager.s -o obj/blinksManager.o
+
 obj/menuList.o: src/menuList.s
 	as --32 -gstabs src/menuList.s -o obj/menuList.o
 
-bin/main: obj/menu.o obj/menuSupervisor.o obj/isSupervisor.o obj/getArrow.o obj/menuList.o
-	ld -m elf_i386 obj/isSupervisor.o obj/getArrow.o obj/menu.o obj/menuSupervisor.o obj/menuList.o -o bin/main
+bin/main: obj/menu.o obj/menuSupervisor.o obj/isSupervisor.o obj/getArrow.o obj/menuList.o obj/blinksManager.o
+	ld -m elf_i386 obj/isSupervisor.o obj/getArrow.o obj/menu.o obj/menuSupervisor.o obj/menuList.o obj/blinksManager.o -o bin/main
 
 
 
