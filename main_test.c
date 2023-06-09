@@ -38,11 +38,16 @@ int main(int argc, char *argv[])
     int isSuperVisor = 0;
     int porte = 1;
     int backHome = 1;
+    char frecce = '3';
+    char frecceIns;
+    int gomme = 1;
     int moreDetails = 0;
     // Counter del menu
     int menuCounter = 0;
-    // array delle voci del menu
+    // array delle voci del menu utente
     char *menuString[6] = {"Setting automobile:", "Data:", "Ora:", "Blocco automatico porte:", "Back-home:", "Check olio"};
+    // array delle voci del menu supervisor
+    char *menuStringSupervisor[8] = {"Setting automobile:", "Data:", "Ora:", "Blocco automatico porte:", "Back-home:", "Check olio", "Frecce direzione:", "Reset pressione gomme:"};
     // Genero struct contenente la data di oggi
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
@@ -62,126 +67,326 @@ int main(int argc, char *argv[])
         if (codeMatch)
             isSuperVisor = 1;
     }
-    while (1)
-    {
-        // flag che serve per modificare l'impostazione
-        // 0 no modifiche 1 modifiche
-        int modify = 0;
-        if (getch() == '\e')
-        {
-            getch();
-            switch (getch())
-            {
-            case 'A':
-                clrscr();
-                if (!moreDetails)
-                {
-                    menuCounter > 0 ? menuCounter-- : menuCounter++;
-                }else{
-                    modify = 1;
-                }
+//#################################################################################################
 
-                break;
-            case 'B':
-                clrscr();
-                if (!moreDetails)
-                {
-                    menuCounter < 5 ? menuCounter++ : menuCounter;
-                }else{
-                    modify = 1;
-                }
-                break;
-            case 'C':
-                clrscr();
-                if (menuCounter == 3 || menuCounter == 4)
-                {   
-                    moreDetails = 1;
-                }
-                break;
-            case 'D':
-                clrscr();
-                if (menuCounter == 3 || menuCounter == 4)
-                {   
-                    moreDetails = 0;
-                }
-                break;
-            }
-            switch (menuCounter)
+    if(!isSuperVisor){//MENU UTENTE
+        while(1){
+            // flag che serve per modificare l'impostazione
+            // 0 no modifiche 1 modifiche
+            int modify = 0;
+            if (getch() == '\e')
             {
-            case 0:
-                printf("%d: %s ", menuCounter, menuString[menuCounter]);
-                if (isSuperVisor)
+                getch();
+                switch (getch())
                 {
-                    printf("(supervisor)\n");
-                }
-                else
-                {
-                    printf("\n");
-                }
+                case 'A':
+                    clrscr();
+                    if (!moreDetails)
+                    {
+                        menuCounter > 0 ? menuCounter-- : menuCounter++;
+                    }else{
+                        modify = 1;
+                    }
 
-                break;
-            case 1:
-                printf("%d: %s ", menuCounter, menuString[menuCounter]);
-                printf("%02d-%02d-%02d\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
-                break;
-            case 2:
-                printf("%d: %s ", menuCounter, menuString[menuCounter]);
-                printf("%02d:%02d:%02d\n", tm.tm_hour, tm.tm_min, tm.tm_sec);
-                break;
-            case 3:
-                if (moreDetails)
-                {
-                    if (modify)
+                    break;
+                case 'B':
+                    clrscr();
+                    if (!moreDetails)
                     {
-                        porte = !porte;
+                        menuCounter < 5 ? menuCounter++ : menuCounter;
+                    }else{
+                        modify = 1;
                     }
-                    
-                    printf("%s (modifica) ",menuString[menuCounter]);
-                    if (porte)
-                    {
-                        printf("ON\n");
-                    }else
-                    {
-                        printf("OFF\n");
+                    break;
+                case 'C':
+                    clrscr();
+                    if (menuCounter == 3 || menuCounter == 4)
+                    {   
+                        moreDetails = 1;
                     }
-                    
-                    
+                    break;
+                case 'D':
+                    clrscr();
+                    if (menuCounter == 3 || menuCounter == 4)
+                    {   
+                        moreDetails = 0;
+                    }
+                    break;
                 }
-                else
+                switch (menuCounter)
                 {
+                case 0:
                     printf("%d: %s ", menuCounter, menuString[menuCounter]);
-                    if (porte)
+                    if (isSuperVisor)
                     {
-                        printf("ON\n");
+                        printf("(supervisor)\n");
                     }
                     else
                     {
-                        printf("OFF\n");
+                        printf("\n");
                     }
-                }
 
-                break;
-            case 4:
-                printf("%d: %s ", menuCounter, menuString[menuCounter]);
-                if (backHome)
-                {
-                    printf("ON\n");
+                    break;
+                case 1:
+                    printf("%d: %s ", menuCounter, menuString[menuCounter]);
+                    printf("%02d-%02d-%02d\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
+                    break;
+                case 2:
+                    printf("%d: %s ", menuCounter, menuString[menuCounter]);
+                    printf("%02d:%02d:%02d\n", tm.tm_hour, tm.tm_min, tm.tm_sec);
+                    break;
+                case 3:
+                    if (moreDetails)
+                    {
+                        if (modify)
+                        {
+                            porte = !porte;
+                        }
+                        
+                        printf("%s (modifica) ",menuStringSupervisor[menuCounter]);
+                        if (porte)
+                        {
+                            printf("ON\n");
+                        }else
+                        {
+                            printf("OFF\n");
+                        }
+                    }
+                    else
+                    {
+                        printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
+                        if (porte)
+                        {
+                            printf("ON\n");
+                        }
+                        else
+                        {
+                            printf("OFF\n");
+                        }
+                    }
+
+                    break;
+                case 4:
+                    if (moreDetails)
+                    {
+                        if (modify)
+                        {
+                            backHome = !backHome;
+                        }
+                        printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
+                        if (backHome)
+                        {
+                            printf("ON\n");
+                        }else
+                        {
+                            printf("OFF\n");
+                        }
+                    }
+                    else
+                    {
+                        printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
+                        if (backHome)
+                        {
+                            printf("ON\n");
+                        }
+                        else
+                        {
+                            printf("OFF\n");
+                        }
+                    }                 
+                    break;
+                case 5:
+                    printf("%d: %s\n", menuCounter, menuString[menuCounter]);
+                    break;
                 }
-                else
-                {
-                    printf("OFF\n");
-                }
-                break;
-            case 5:
-                printf("%d: %s\n", menuCounter, menuString[menuCounter]);
+            }
+            else if (getch() == 'q')
+            {
                 break;
             }
         }
-        else if (getch() == 'q')
-        {
-            break;
+    }
+//#######################################################################################
+
+    if(isSuperVisor){//MENU SUPERVISOR  
+        while(1){
+            // flag che serve per modificare l'impostazione
+            // 0 no modifiche 1 modifiche
+            int modify = 0;
+            if (getch() == '\e')
+            {
+                getch();
+                switch (getch())
+                {
+                case 'A':
+                    clrscr();
+                    if (!moreDetails)
+                    {
+                        menuCounter > 0 ? menuCounter-- : menuCounter++;
+                    }else{
+                        modify = 1;
+                    }
+
+                    break;
+                case 'B':
+                    clrscr();
+                    if (!moreDetails)
+                    {
+                        menuCounter < 7 ? menuCounter++ : menuCounter;
+                    }else{
+                        modify = 1;
+                    }
+                    break;
+                case 'C':
+                    clrscr();
+                    if (menuCounter == 3 || menuCounter == 4 || menuCounter == 6 || menuCounter == 7)
+                    {   
+                        moreDetails = 1;
+                    }
+                    break;
+                case 'D':
+                    clrscr();
+                    if (menuCounter == 3 || menuCounter == 4 || menuCounter == 6 || menuCounter == 7)
+                    {   
+                        moreDetails = 0;
+                    }
+                    break;
+                }
+                switch (menuCounter)
+                {
+                case 0:
+                    printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
+                    if (isSuperVisor)
+                    {
+                        printf("(supervisor)\n");
+                    }
+                    else
+                    {
+                        printf("\n");
+                    }
+
+                    break;
+                case 1:
+                    printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
+                    printf("%02d-%02d-%02d\n", tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900);
+                    break;
+                case 2:
+                    printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
+                    printf("%02d:%02d:%02d\n", tm.tm_hour, tm.tm_min, tm.tm_sec);
+                    break;
+                case 3:
+                    if (moreDetails)
+                    {
+                        if (modify)
+                        {
+                            porte = !porte;
+                        }
+                        
+                        printf("%s (modifica) ",menuStringSupervisor[menuCounter]);
+                        if (porte)
+                        {
+                            printf("ON\n");
+                        }else
+                        {
+                            printf("OFF\n");
+                        }
+                    }
+                    else
+                    {
+                        printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
+                        if (porte)
+                        {
+                            printf("ON\n");
+                        }
+                        else
+                        {
+                            printf("OFF\n");
+                        }
+                    }
+
+                    break;
+                case 4:
+                    if (moreDetails)
+                    {
+                        if (modify)
+                        {
+                            backHome = !backHome;
+                        }
+                        printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
+                        if (backHome)
+                        {
+                            printf("ON\n");
+                        }else
+                        {
+                            printf("OFF\n");
+                        }
+                    }
+                    else
+                    {
+                        printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
+                        if (backHome)
+                        {
+                            printf("ON\n");
+                        }
+                        else
+                        {
+                            printf("OFF\n");
+                        }
+                    }                 
+                    break;
+                case 5:
+                    printf("%d: %s\n", menuCounter, menuStringSupervisor[menuCounter]);
+                    break;
+                case 6://freccieDirez
+                    if (moreDetails)
+                    {
+                        printf("%d: %s\t", menuCounter, menuStringSupervisor[menuCounter]);
+                        printf("%c\n",frecce);
+
+                        if(modify){
+                            scanf("%c ", &frecceIns);
+                            frecce=frecceIns;
+                            if (frecce>='2'||frecce<='5')
+                            {
+                                printf("%s (modifica) ",menuStringSupervisor[menuCounter]);
+                                printf("%c\n",frecce);
+                            }
+                            if(frecce<'2')
+                            {
+                                frecce='2';
+                                printf("%s (modifica) ",menuStringSupervisor[menuCounter]);
+                                printf("%c\n",frecce);
+                            }if(frecce>'5')
+                            {
+                                frecce='5';
+                                printf("%s (modifica) ",menuStringSupervisor[menuCounter]);
+                                printf("%c\n",frecce);
+                            }
+                        }   
+                    }
+                    else
+                    {
+                        printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
+                        printf("%c\n",frecceIns);
+                    }
+                    break;
+                case 7://resetGomme
+                printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
+                    if (moreDetails)
+                    {
+                        printf("Pressione gomme resettata");
+                    }
+                    break;
+
+                }
+            }
+            else if (getch() == 'q')
+            {
+                break;
+            }
         }
     }
+    
 
     return 0;
 }
