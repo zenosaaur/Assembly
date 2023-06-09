@@ -1,5 +1,5 @@
-.section .bss
-    input: .skip 2
+.section .data
+    input: .ascii "00"
 .section .text
 	.global blinkManagers
 	.type blinkManagers, @function
@@ -13,15 +13,17 @@ blinkManagers:
     leal input,%ecx
     movl $1, %edx
     int $0x80
-    jmp cmpStart
-    /*cmpl $10, %eax
+    leal input, %esi 
+    xorl %ecx,%ecx
+    movb (%ecx,%esi,1) , %bl
+    cmpb $10, %bl
     je fineBack
-    jg cmpStart*/
+    jg cmpStart
 
 cmpStart:
-    movl input,%eax
+    movb %bl,%al
     movl %eax,-4(%ebp)
-    cmpl $50, input
+    cmpb $50, %bl
     jl min2
     jg max2
     je equal2
@@ -30,16 +32,16 @@ equal2:
     jmp fine
 
 min2:
-    movl $50, %eax
+    movl $50, -4(%ebp)
     jmp fine
 
 max2:
-    cmpl $53, %eax
+    cmpl $53, -4(%ebp)
     jle fine
     jg max5
 
 max5:
-    movl $53, %eax
+    movl $53, -4(%ebp)
     jmp fine
 
 fineBack:

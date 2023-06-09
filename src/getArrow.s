@@ -3,10 +3,8 @@ che ha la funzionalita di restiture un numero
 da 1-4 in caso fosse premuto una freccia direzionale 
 in caso contrario restituisce 0 */
 
-
-.section .bss
-    input: .skip 4
-
+.section .data
+    input: .ascii "0000"
 .section .text
 	.global getArrow
 	.type getArrow, @function
@@ -22,7 +20,10 @@ getArrow:
         leal input,%ecx  
         movl $1, %edx
         int $0x80
-        cmpl $27, input 
+        leal input, %esi 
+        xorl %ecx,%ecx
+        movb (%ecx,%esi,1) , %bl
+        cmpb $27, %bl
         je scanArrow2
         jmp scanArrow1
         
@@ -32,7 +33,10 @@ getArrow:
         leal input,%ecx  
         movl $1, %edx
         int $0x80
-        cmpl $91, input 
+        leal input, %esi 
+        xorl %ecx,%ecx
+        movb (%ecx,%esi,1) , %bl
+        cmpb $91, %bl 
         je scanArrow3
         jmp scanArrow1
         
@@ -42,16 +46,19 @@ getArrow:
         leal input,%ecx  
         movl $1, %edx
         int $0x80
-        cmpl $65, input 
+        leal input, %esi 
+        xorl %ecx,%ecx
+        movb (%ecx,%esi,1) , %bl
+        cmpb $65, %bl 
         jge subCntrl
         jmp scanArrow1
 
     subCntrl:
-        cmpl $68, input
+        cmpb $68, %bl
         jg scanArrow1  
         # salvo  il valore preso in input e gli sottraggo 64 e 
         # non 63 cosi do non avere il regsitro a 0(valore di default )
-        movl input, %eax
+        movb %bl, %al
         subl $64, %eax
         # inseriesco l valore nello stack
         movl %eax,-4(%ebp)
@@ -63,7 +70,10 @@ getArrow:
         leal input,%ecx  
         movl $1, %edx
         int $0x80
-        cmpl $10, input
+        leal input, %esi 
+        xorl %ecx,%ecx
+        movb (%ecx,%esi,1) , %bl
+        cmpb $10, %bl
         je fine
         jmp scanArrow1
         
