@@ -35,11 +35,12 @@ int main(int argc, char *argv[])
     // primo passo prendere da riga di comando
     // l'argoment user/superVisor(2244)
     char *userParameter = argv[1]; // Section flags
+    char ch;
     int isSuperVisor = 0;
     int porte = 1;
     int backHome = 1;
-    char frecce = '3';
-    char frecceIns;
+    int frecce = 3;
+    int frecceIns;
     int gomme = 1;
     int moreDetails = 0;
     // Counter del menu
@@ -74,16 +75,18 @@ int main(int argc, char *argv[])
             // flag che serve per modificare l'impostazione
             // 0 no modifiche 1 modifiche
             int modify = 0;
-            if (getch() == '\e')
+            ch=getchar();
+            if (ch == '\e')
             {
-                getch();
-                switch (getch())
+                getchar();
+                switch (getchar())
                 {
                 case 'A':
                     clrscr();
                     if (!moreDetails)
                     {
-                        menuCounter > 0 ? menuCounter-- : menuCounter++;
+                        menuCounter > 0 ? menuCounter-- : menuCounter ==0 ? menuCounter=5 : menuCounter++;
+                        
                     }else{
                         modify = 1;
                     }
@@ -93,7 +96,7 @@ int main(int argc, char *argv[])
                     clrscr();
                     if (!moreDetails)
                     {
-                        menuCounter < 5 ? menuCounter++ : menuCounter;
+                        menuCounter < 5 ? menuCounter++ : menuCounter ==5 ? menuCounter=0 : menuCounter;
                     }else{
                         modify = 1;
                     }
@@ -103,13 +106,6 @@ int main(int argc, char *argv[])
                     if (menuCounter == 3 || menuCounter == 4)
                     {   
                         moreDetails = 1;
-                    }
-                    break;
-                case 'D':
-                    clrscr();
-                    if (menuCounter == 3 || menuCounter == 4)
-                    {   
-                        moreDetails = 0;
                     }
                     break;
                 }
@@ -125,7 +121,6 @@ int main(int argc, char *argv[])
                     {
                         printf("\n");
                     }
-
                     break;
                 case 1:
                     printf("%d: %s ", menuCounter, menuString[menuCounter]);
@@ -143,7 +138,7 @@ int main(int argc, char *argv[])
                             porte = !porte;
                         }
                         
-                        printf("%s (modifica) ",menuStringSupervisor[menuCounter]);
+                        printf("%s (modifica) ",menuString[menuCounter]);
                         if (porte)
                         {
                             printf("ON\n");
@@ -154,7 +149,7 @@ int main(int argc, char *argv[])
                     }
                     else
                     {
-                        printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
+                        printf("%d: %s ", menuCounter, menuString[menuCounter]);
                         if (porte)
                         {
                             printf("ON\n");
@@ -173,7 +168,7 @@ int main(int argc, char *argv[])
                         {
                             backHome = !backHome;
                         }
-                        printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
+                        printf("%s (modifica) ",menuString[menuCounter]);
                         if (backHome)
                         {
                             printf("ON\n");
@@ -184,7 +179,7 @@ int main(int argc, char *argv[])
                     }
                     else
                     {
-                        printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
+                        printf("%d: %s ", menuCounter, menuString[menuCounter]);
                         if (backHome)
                         {
                             printf("ON\n");
@@ -200,7 +195,7 @@ int main(int argc, char *argv[])
                     break;
                 }
             }
-            else if (getch() == 'q')
+            else if (ch == 'q')
             {
                 break;
             }
@@ -213,16 +208,17 @@ int main(int argc, char *argv[])
             // flag che serve per modificare l'impostazione
             // 0 no modifiche 1 modifiche
             int modify = 0;
-            if (getch() == '\e')
+            ch=getchar();
+            if (ch == '\e')
             {
-                getch();
-                switch (getch())
+                getchar();
+                switch (getchar())
                 {
                 case 'A':
                     clrscr();
                     if (!moreDetails)
                     {
-                        menuCounter > 0 ? menuCounter-- : menuCounter++;
+                        menuCounter > 0 ? menuCounter-- : menuCounter ==0 ? menuCounter=7 : menuCounter++;
                     }else{
                         modify = 1;
                     }
@@ -232,7 +228,7 @@ int main(int argc, char *argv[])
                     clrscr();
                     if (!moreDetails)
                     {
-                        menuCounter < 7 ? menuCounter++ : menuCounter;
+                        menuCounter < 7 ? menuCounter++ : menuCounter ==7 ? menuCounter=0 : menuCounter;
                     }else{
                         modify = 1;
                     }
@@ -242,13 +238,6 @@ int main(int argc, char *argv[])
                     if (menuCounter == 3 || menuCounter == 4 || menuCounter == 6 || menuCounter == 7)
                     {   
                         moreDetails = 1;
-                    }
-                    break;
-                case 'D':
-                    clrscr();
-                    if (menuCounter == 3 || menuCounter == 4 || menuCounter == 6 || menuCounter == 7)
-                    {   
-                        moreDetails = 0;
                     }
                     break;
                 }
@@ -312,7 +301,7 @@ int main(int argc, char *argv[])
                         {
                             backHome = !backHome;
                         }
-                        printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
+                        printf("%s (modifica) ",menuStringSupervisor[menuCounter]);
                         if (backHome)
                         {
                             printf("ON\n");
@@ -340,53 +329,41 @@ int main(int argc, char *argv[])
                 case 6://freccieDirez
                     if (moreDetails)
                     {
-                        printf("%d: %s\t", menuCounter, menuStringSupervisor[menuCounter]);
-                        printf("%c\n",frecce);
-
-                        if(modify){
-                            scanf("%c ", &frecceIns);
-                            frecce=frecceIns;
-                            if (frecce>='2'||frecce<='5')
-                            {
-                                printf("%s (modifica) ",menuStringSupervisor[menuCounter]);
-                                printf("%c\n",frecce);
-                            }
-                            if(frecce<'2')
-                            {
-                                frecce='2';
-                                printf("%s (modifica) ",menuStringSupervisor[menuCounter]);
-                                printf("%c\n",frecce);
-                            }if(frecce>'5')
-                            {
-                                frecce='5';
-                                printf("%s (modifica) ",menuStringSupervisor[menuCounter]);
-                                printf("%c\n",frecce);
-                            }
-                        }   
+                        printf("%s (modifica) ",menuStringSupervisor[menuCounter]);
+                        scanf("%d ", &frecceIns);
+                        frecce=frecceIns;
+                        if(frecce<2)
+                        {
+                            frecce=2;
+                            
+                        }else if(frecce>5)
+                        {
+                            frecce=5;
+                        }
+                        printf("%s (modifica) ",menuStringSupervisor[menuCounter]);
+                        printf("%d\n",frecce);
                     }
                     else
                     {
                         printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
-                        printf("%c\n",frecceIns);
+                        printf("%d\n",frecce);
                     }
                     break;
                 case 7://resetGomme
-                printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
+                    printf("%d: %s ", menuCounter, menuStringSupervisor[menuCounter]);
                     if (moreDetails)
                     {
-                        printf("Pressione gomme resettata");
+                        printf("\nPressione gomme resettata\n");
+                        break;
                     }
                     break;
-
                 }
             }
-            else if (getch() == 'q')
+            else if (ch == 'q')
             {
                 break;
             }
         }
     }
-    
-
     return 0;
 }
