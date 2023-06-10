@@ -31,25 +31,33 @@ loopArrow:
     cmpl $1, %eax
     je blinks
     call getArrow
-    addb %al, freccia
+    movb %al, freccia
      
     xorb %al,%al
 
-    cmpb $49, freccia
+    cmpb $1, freccia
     je arrowAHandler
-    cmpb $50, freccia
+    cmpb $2, freccia
     je arrowBHandler    
-    cmpb $51, freccia
-    je arrowCHandler    
-    cmpb $52, freccia
-    je arrowDHandler
+    cmpb $3, freccia
+    je arrowCHandler
+    cmpb $10, freccia
+    je deleteMoreOption
     jmp loopArrow
 blinks:
     call blinkManagers
-    movl %eax,frecce
-    movl frecce,%ebx
-    movl $1,%eax
-    jmp loopArrow   
+    # in evx ho il carattere di output
+    cmpb $10,  %al
+    je reset
+        movb %al , frecce
+        movl frecce , %ebx
+        movl $1,%eax
+        movl %eax, moreOption
+        jmp loopArrow
+    reset:
+        movl $0, %eax
+        movl $0, moreOption
+        jmp loopArrow   
 fine:
     addl $4, %esp
     movl %ebp, %esp
@@ -131,8 +139,8 @@ arrowCHandler:
             movl pressione , %ebx
             movl %eax, moreOption
             jmp loopArrow
-arrowDHandler:
-        subb $4, freccia
-        movl $0, %eax
-        movl %eax, moreOption
-        jmp loopArrow
+deleteMoreOption:
+    subb $10, freccia
+    xorl %eax,%eax
+    movl $0, moreOption       
+    jmp loopArrow

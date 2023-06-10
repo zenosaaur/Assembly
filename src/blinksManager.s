@@ -17,12 +17,11 @@ blinkManagers:
     xorl %ecx,%ecx
     movb (%ecx,%esi,1) , %bl
     cmpb $10, %bl
+    movb %bl,-4(%ebp)
     je fineBack
     jg cmpStart
 
 cmpStart:
-    movb %bl,%al
-    movl %eax,-4(%ebp)
     cmpb $50, %bl
     jl min2
     jg max2
@@ -32,20 +31,20 @@ equal2:
     jmp fine
 
 min2:
-    movl $50, -4(%ebp)
+    movb $50, %bl
     jmp fine
 
 max2:
-    cmpl $53, -4(%ebp)
+    cmpb $53, %bl
     jle fine
     jg max5
 
 max5:
-    movl $53, -4(%ebp)
+    movb $53, %bl
     jmp fine
 
 fineBack:
-    movl -4(%ebp) , %eax
+    movb %bl,%al
     # routine per svuotare lo stack
     xorl %ecx, %ecx
     xorl %edx, %edx

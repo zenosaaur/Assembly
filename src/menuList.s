@@ -26,6 +26,8 @@
     newLine: .ascii "\n"
     lenNewLine: .long . - newLine
     lampeggio: .ascii "3"
+    pressione: .ascii "Pressione gomme resettata\n"
+    lenPressione: .long . - pressione
 .section .text
 	.global menuList
 	.type menuList, @function
@@ -123,12 +125,19 @@ counter6:
     call printMoreOptionFreccia
     jmp end
 counter7:
+    cmpl $1, -4(%ebp)
+    je moreOptionPressione
     movl $4, %eax
     movl $1, %ebx
     leal menu8,%ecx
     movl lenMenu8, %edx
     int $0x80
+    xorl %eax,%eax
     jmp end
+    moreOptionPressione:
+        call printMoreOptionPressione
+        xorl %eax,%eax
+        jmp end
 end:
     xorl %ebx,%ebx
     addl $4, %esp
@@ -234,3 +243,15 @@ printMoreOptionFreccia:
             movl %ebp, %esp
             pop %ebp
             ret
+.type printMoreOptionPressione, @function
+printMoreOptionPressione:
+    push %ebp
+    movl %esp, %ebp
+    movl $4, %eax
+    movl $1, %ebx
+    leal pressione,%ecx
+    movl lenPressione, %edx
+    int $0x80
+    movl %ebp, %esp
+    pop %ebp
+    ret

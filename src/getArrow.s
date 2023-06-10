@@ -13,16 +13,17 @@ getArrow:
     push %ebp
     movl %esp, %ebp
     addl $-4, %esp
-
-    scanArrow1:#controllo carattere '^'
+    scanArrow1: # controllo carattere '^'
         movl $3, %eax  
         movl $0, %ebx
         leal input,%ecx  
         movl $1, %edx
         int $0x80
-        leal input, %esi 
+        leal input, %esi
         xorl %ecx,%ecx
         movb (%ecx,%esi,1) , %bl
+        cmpb $10, %bl
+        je escapeCommand
         cmpb $27, %bl
         je scanArrow2
         jmp scanArrow1
@@ -76,7 +77,9 @@ getArrow:
         cmpb $10, %bl
         je fine
         jmp scanArrow1
-        
+    escapeCommand:
+        movl $10, -4(%ebp)
+
 fine:
     # routine per svuotare lo stack
     movl -4(%ebp), %eax
