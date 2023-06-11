@@ -12,7 +12,8 @@ in caso contrario restituisce 0 */
 getArrow:
     push %ebp
     movl %esp, %ebp
-    addl $-4, %esp
+    addl $-8, %esp
+    movl %eax, -8(%ebp)
     scanArrow1: # controllo carattere '^'
         movl $3, %eax  
         movl $0, %ebx
@@ -23,10 +24,11 @@ getArrow:
         xorl %ecx,%ecx
         movb (%ecx,%esi,1) , %bl
         cmpb $10, %bl
-        je escapeCommand
-        cmpb $27, %bl
-        je scanArrow2
-        jmp scanArrow1
+        je checkEscapeCommand
+        continueInserimento:
+            cmpb $27, %bl
+            je scanArrow2
+            jmp scanArrow1
         
     scanArrow2:#controllo carattere '['
         movl $3, %eax  
@@ -55,12 +57,9 @@ getArrow:
         jmp scanArrow1
 
     subCntrl:
-        cmpb $68, %bl
-        jg scanArrow1  
-        # salvo  il valore preso in input e gli sottraggo 64 e 
-        # non 63 cosi do non avere il regsitro a 0(valore di default )
+        cmpb $67, %bl
+        jg wrongArrow  
         movb %bl, %al
-        subl $64, %eax
         # inseriesco l valore nello stack
         movl %eax,-4(%ebp)
         jmp backspace
@@ -77,7 +76,18 @@ getArrow:
         cmpb $10, %bl
         je fine
         jmp scanArrow1
-    escapeCommand:
+    wrongArrow:
+        movl $3, %eax  
+        movl $0, %ebx
+        leal input,%ecx  
+        movl $1, %edx
+        int $0x80
+        jmp scanArrow1   
+    checkEscapeCommand:
+        cmpl $1, -8(%ebp)
+        je continue
+        jmp continueInserimento
+    continue:
         movl $10, -4(%ebp)
 
 fine:
@@ -85,7 +95,7 @@ fine:
     movl -4(%ebp), %eax
     xorl %ecx, %ecx
     xorl %edx, %edx
-    addl $4, %esp
+    addl $8, %esp
     movl %ebp, %esp
     pop %ebp
 

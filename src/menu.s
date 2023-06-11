@@ -28,22 +28,29 @@ menu:
     movl $7, limitOfMenu
 loopArrow:
     call menuList
-    cmpl $1, %eax
-    je blinks
-    call getArrow
-    movb %al, freccia
-     
-    xorb %al,%al
+    cmpl $1, moreOption
+    je compareAnd
+    jmp continue
+    compareAnd:
+        cmpl $6 , -4(%ebp)
+        je blinks
+        jmp continue
+    continue:
+        movl moreOption, %eax
+        call getArrow
+        movb %al, freccia
+        
+        xorb %al,%al
 
-    cmpb $1, freccia
-    je arrowAHandler
-    cmpb $2, freccia
-    je arrowBHandler    
-    cmpb $3, freccia
-    je arrowCHandler
-    cmpb $10, freccia
-    je deleteMoreOption
-    jmp loopArrow
+        cmpb $65, freccia
+        je arrowAHandler
+        cmpb $66, freccia
+        je arrowBHandler    
+        cmpb $67, freccia
+        je arrowCHandler
+        cmpb $10, freccia
+        je deleteMoreOption
+        jmp loopArrow
 blinks:
     call blinkManagers
     # in evx ho il carattere di output
@@ -67,7 +74,7 @@ fine:
 
 
 arrowAHandler:
-        subb $1, freccia
+        subb $65, freccia
         # semplicemente verra incrementato un contatore che serve per scorrere i vari menu ricordarsi che sono ciclici
         cmpl $1,moreOption
         je modifyOption1
@@ -93,7 +100,7 @@ menuIncrent:
                 xorl %ebx,%ebx
                 jmp loopArrow
 arrowBHandler:
-        subb $2, freccia
+        subb $66, freccia
         movl limitOfMenu,%ecx
         cmpl %ecx,-4(%ebp)
         je returnToTop 
@@ -104,7 +111,7 @@ arrowBHandler:
             jmp loopArrow
         jmp fine
 arrowCHandler:
-        subb $3, freccia
+        subb $67, freccia
         # se il contatore dello stack è:
         #   -  3 entro nel menu delle porte
         #   -  4 entro nel menu back home

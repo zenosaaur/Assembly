@@ -8,6 +8,7 @@ blinkManagers:
     movl %esp, %ebp
     addl $-4, %esp
 
+loopInput:
     movl $3, %eax
     movl $0, %ebx
     leal input,%ecx
@@ -19,8 +20,12 @@ blinkManagers:
     cmpb $10, %bl
     movb %bl,-4(%ebp)
     je fineBack
-    jg cmpStart
-
+    cmpb $48, %bl
+    jge andCondiction
+    jmp invalidInput
+andCondiction:
+    cmpb $57, %bl
+    jg invalidInput
 cmpStart:
     cmpb $50, %bl
     jl min2
@@ -53,7 +58,15 @@ fineBack:
     pop %ebp
     ret
 
+invalidInput:
+    movl $3, %eax
+    movl $0, %ebx
+    leal input, %ecx
+    movl $1, %edx
+    int $0x80
+    jmp loopInput
 fine:
+    movb %bl, -4(%ebp)
     movl $3, %eax
     movl $0, %ebx
     leal input, %ecx
