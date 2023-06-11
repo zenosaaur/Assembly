@@ -78,7 +78,7 @@ arrowAHandler:
         # semplicemente verra incrementato un contatore che serve per scorrere i vari menu ricordarsi che sono ciclici
         cmpl $1,moreOption
         je modifyOption1
-menuIncrent:
+menuDecremnt:
         cmpl $0,-4(%ebp)
         je returnToBottom 
         decl -4(%ebp)
@@ -88,28 +88,39 @@ menuIncrent:
             addl %ecx, -4(%ebp)
             jmp loopArrow
         modifyOption1:
-            movl $1, %eax
-            cmpl $1, porte
-            je decremtOption1
-            incremetOption1:
-                incl porte
-                movl $1,%ebx
+            movl moreOption, %eax
+            cmpl $3,-4(%ebp)
+            je callPorte2
+            callBack2:
+                call optionBack
                 jmp loopArrow
-            decremtOption1:
-                decl porte
-                xorl %ebx,%ebx
+            callPorte2:
+                call optionPorte
                 jmp loopArrow
 arrowBHandler:
         subb $66, freccia
+        # semplicemente verra incrementato un contatore che serve per scorrere i vari menu ricordarsi che sono ciclici
+        cmpl $1,moreOption
+        je modifyOption2
+menuIncrement:
         movl limitOfMenu,%ecx
-        cmpl %ecx,-4(%ebp)
+        cmpl %ecx ,-4(%ebp)
         je returnToTop 
         incl -4(%ebp)
         jmp loopArrow
         returnToTop:
-            movl $0, -4(%ebp) 
+            movl $0, -4(%ebp)
             jmp loopArrow
-        jmp fine
+        modifyOption2:
+            movl moreOption, %eax
+            cmpl $3,-4(%ebp)
+            je callPorte1
+            callBack1:
+                call optionBack
+                jmp loopArrow
+            callPorte1:
+                call optionPorte
+                jmp loopArrow
 arrowCHandler:
         subb $67, freccia
         # se il contatore dello stack è:
@@ -151,3 +162,42 @@ deleteMoreOption:
     xorl %eax,%eax
     movl $0, moreOption       
     jmp loopArrow
+
+
+
+.type optionPorte, @function
+optionPorte:
+    push %ebp
+    movl %esp, %ebp
+    cmpl $1, porte
+    je decremtOptionPorte
+    incremetOptionPorte:
+        incl porte
+        movl $1,%ebx
+        movl %ebp, %esp
+        pop %ebp
+        ret
+     decremtOptionPorte:
+        decl porte
+        movl $0,%ebx
+        movl %ebp, %esp
+        pop %ebp
+        ret
+.type optionBack, @function
+optionBack:
+    push %ebp
+    movl %esp, %ebp
+    cmpl $1, backHome
+    je decremtOptionBack
+    incremetOptionBack:
+        incl backHome
+        movl $1,%ebx
+        movl %ebp, %esp
+        pop %ebp
+        ret
+    decremtOptionBack:
+        decl backHome
+        movl $0,%ebx
+        movl %ebp, %esp
+        pop %ebp
+        ret
