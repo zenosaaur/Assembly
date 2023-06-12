@@ -37,7 +37,7 @@ void menu()
     int backHome = 1;
     int lampeggio = 3;
     int pressione = 1;
-    int parameterMenuList;
+    int parameterMenuList = 0;
     int moreOption = 0;
     if (isSupervisor)
     {
