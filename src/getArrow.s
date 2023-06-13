@@ -12,8 +12,7 @@ in caso contrario restituisce 0 */
 getArrow:
     push %ebp
     movl %esp, %ebp
-    addl $-8, %esp
-    movl %eax, -8(%ebp)
+    addl $-4, %esp
     scanArrow1: # controllo carattere '^'
         movl $3, %eax  
         movl $0, %ebx
@@ -84,7 +83,7 @@ getArrow:
         int $0x80
         jmp scanArrow1   
     checkEscapeCommand:
-        cmpl $1, -8(%ebp)
+        cmpl $1, 8(%ebp)
         je continue
         jmp continueInserimento
     continue:

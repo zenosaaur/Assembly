@@ -56,7 +56,7 @@ void menu()
             }
             else
             {
-                lampeggio = tmp-48;
+                lampeggio = tmp - 48;
                 parameterMenuList = lampeggio;
             }
         }
@@ -274,7 +274,7 @@ int getArrow(int moreOptions)
         char ch;
         ch = getchar();
         if (ch == '\e')
-        {   
+        {
             ch = getchar();
             int ascii = (int)ch;
             if (ascii == 91)
@@ -286,62 +286,72 @@ int getArrow(int moreOptions)
 
                     int tmp = ascii;
                     ch = getchar();
-                     ascii = (int)ch;
+                    ascii = (int)ch;
                     if (ascii == 10)
                     {
                         return tmp;
-                    }else{
+                    }
+                    else
+                    {
                         validChar = 0;
                     }
-                }else{
+                }
+                else
+                {
                     ch = getchar();
                     validChar = 0;
                 }
-                
             }
-            
         }
-        else if (moreOptions && ch == '\n'){
+        else if (moreOptions && ch == '\n')
+        {
             return (int)(ch);
-        }else{
+        }
+        else
+        {
             validChar = 0;
         }
     }
     return 0;
 }
 
-int blinksManager(){
+int blinksManager()
+{
     int ascii;
-    char invio;
     int isValid = 1;
     do
     {
+        char invio;
         isValid = 1;
         char input;
-        scanf("%c",&input);
+        scanf("%c", &input);
         ascii = (int)(input);
-        if (ascii > 57 || (ascii < 48 && ascii != 10))
+        if (ascii != 10)
         {
-            isValid = 0;
-            char tmp;
-            do
+            scanf("%c", &invio);
+            if ((int)invio !=10 )
             {
-                scanf("%c",&tmp);
-            } while (tmp != '\n');
+                isValid = 0;
+                char tmp;
+                do
+                {
+                    scanf("%c", &tmp);
+                } while (tmp != '\n');
+            }
+            else if (ascii > 57 || ascii < 48)
+            {
+                isValid = 0;
+            }
         }
-        
+
     } while (isValid == 0);
     if (ascii < 50 && ascii != 10)
-    {        
+    {
         ascii = 50;
-    }else if (ascii > 53)
+    }
+    else if (ascii > 53)
     {
         ascii = 53;
-    }if (ascii != 10)
-    {
-        scanf("%c",&invio);
     }
-    
-    
     return ascii;
 }

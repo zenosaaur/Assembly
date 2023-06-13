@@ -26,7 +26,7 @@
     newLine: .ascii "\n"
     lenNewLine: .long . - newLine
     lampeggio: .ascii "3"
-    pressione: .ascii "Pressione gomme resettata\n"
+    pressione: .ascii "Pressione gomme resettata\n\n"
     lenPressione: .long . - pressione
 .section .text
 	.global menuList
@@ -44,10 +44,7 @@ Parametri:
 menuList:
     push %ebp
     movl %esp, %ebp
-    addl $-8, %esp
-    movl %eax,-4(%ebp)
-    movl %ebx,-8(%ebp)
-    movl 8(%ebp),%eax
+    movl 16(%ebp),%eax
     cmpl $0, %eax
     je counter0
     cmpl $1, %eax
@@ -125,7 +122,7 @@ counter6:
     call printMoreOptionFreccia
     jmp end
 counter7:
-    cmpl $1, -4(%ebp)
+    cmpl $1, 12(%ebp)
     je moreOptionPressione
     movl $4, %eax
     movl $1, %ebx
@@ -190,7 +187,7 @@ printMoreOptionONOFF:
     push %ebp
     movl %esp, %ebp
     # se nel registro eax c'e il valore 1 vado nella fase di modifica
-    movl 12(%ebp), %eax
+    movl 20(%ebp), %eax
     cmpb $1, %al
     je moreOptionsONOFF
     # vado a capo
@@ -199,7 +196,7 @@ printMoreOptionONOFF:
     pop %ebp
     ret
     moreOptionsONOFF:
-        movl 8(%ebp), %eax
+        movl 16(%ebp), %eax
         cmpl $1,%eax
         je printOn
         call printOFF
@@ -216,7 +213,7 @@ printMoreOptionONOFF:
 printMoreOptionFreccia:
     push %ebp
     movl %esp, %ebp
-    movl 12(%ebp),%ebx
+    movl 20(%ebp),%ebx
     cmpl $1, %ebx
     je continue
         call new_line
@@ -225,7 +222,7 @@ printMoreOptionFreccia:
         pop %ebp
         ret
     continue:
-        movl 8(%ebp), %ebx
+        movl 16(%ebp), %ebx
         cmpl $0, %ebx
         jg setBlinks
         jmp moreOptionsFreccia
