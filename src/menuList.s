@@ -25,6 +25,8 @@
     lampeggio: .ascii "3"
     pressione: .ascii "Pressione gomme resettata\n\n"
     lenPressione: .long . - pressione
+    clear: .ascii "\033[H\033[J"
+    lenClear: .long . - clear
 .section .text
 	.global menuList
 	.type menuList, @function
@@ -33,6 +35,7 @@
 menuList:
     push %ebp
     movl %esp, %ebp
+    call clearTerminal
     movl 16(%ebp),%eax
     cmpl $0, %eax
     je counter0
@@ -238,6 +241,18 @@ printMoreOptionPressione:
     leal pressione,%ecx
     movl lenPressione, %edx
     int $0x80
+    movl %ebp, %esp
+    pop %ebp
+    ret
+.type clearTerminal, @function
+clearTerminal:
+    push %ebp
+    movl %esp, %ebp
+    movl $4, %eax
+    movl $1, %ebx
+    leal clear,%ecx
+    movl lenClear, %edx
+    int $0x80        
     movl %ebp, %esp
     pop %ebp
     ret
