@@ -1,5 +1,6 @@
 .section .data
     input: .ascii "00"
+    isNumber: .long 1
 .section .text
 	.global blinkManagers
 	.type blinkManagers, @function
@@ -17,13 +18,14 @@ loopInput:
     leal input, %esi 
     xorl %ecx,%ecx
     movb (%ecx,%esi,1) , %bl
+    movl $1,isNumber
     cmpb $10, %bl
     movb %bl,-4(%ebp)
     je fineBack
+    pushl %ebx
+    call isNumberFunction
+    addl $4, %esp
     jmp validate
-andCondiction:
-    cmpb $57, -4(%ebp)
-    jg invalidInput
 cmpStart:
     cmpb $50, -4(%ebp)
     jl min2
@@ -70,10 +72,11 @@ validate:
     jg loopInput
     cmpl $48, -4(%ebp)
     jl loopInput
-    jmp andCondiction
+    jmp cmpStart
 clearBuffer:
-    cmpb $10,%bl
-    je loopInput
+    pushl %ebx
+    call isNumberFunction
+    addl $4, %esp
     movl $3, %eax
     movl $0, %ebx
     leal input, %ecx
@@ -82,15 +85,15 @@ clearBuffer:
     leal input, %esi 
     xorl %ecx,%ecx
     movb (%ecx,%esi,1) , %bl
-    cmpb $10, %bl
-    jne clearBuffer
-    jmp loopInput
-invalidInput:
-    movl $3, %eax
-    movl $0, %ebx
-    leal input, %ecx
-    movl $1, %edx
-    int $0x80
+    cmpb $10,%bl
+    je isNumberOrNot
+    pushl %ebx
+    call isNumberFunction
+    addl $4, %esp
+    jmp clearBuffer
+isNumberOrNot:
+    cmpb $1,isNumber
+    je max5
     jmp loopInput
 fine:
     movl -4(%ebp) , %eax
@@ -101,3 +104,22 @@ fine:
     movl %ebp, %esp
     pop %ebp
     ret
+
+.type isNumberFunction, @function
+isNumberFunction:
+    push %ebp
+    movl %esp, %ebp
+    movl 8(%ebp),%eax
+    cmpl $48,%eax
+    jl notNumber
+    cmpl $57,%eax
+    jg notNumber
+    movl %ebp, %esp
+    pop %ebp
+    ret 
+    notNumber:
+        movl $0, isNumber
+        movl %ebp, %esp
+        pop %ebp
+        ret
+
