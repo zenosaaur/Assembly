@@ -1,8 +1,3 @@
-/*Funzione che non prende nessun parametro, 
-che ha la funzionalita di restiture un numero 
-da 1-4 in caso fosse premuto una freccia direzionale 
-in caso contrario restituisce 0 */
-
 .section .data
     input: .ascii "0000"
 .section .text

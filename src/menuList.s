@@ -1,6 +1,3 @@
-/*
-    File che ha il ruolo di contenitore la parte statica delle stringhe.
-*/
 
 .section .data
     menu1: .ascii  "Setting automobile\n"
@@ -31,14 +28,6 @@
 .section .text
 	.global menuList
 	.type menuList, @function
-
-
-/*
-Parametri:
-    - MoreOptions ----> %eax
-    - Porte/BackHome ----> %ebx
-    - isSupervisor ----> %ecx
-*/
 
 
 menuList:
