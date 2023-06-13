@@ -12,13 +12,15 @@
     limitOfMenu: .long 5
     menuCounter: .long 0
 .section .text
-	.global menu
-	.type menu, @function
+    .global _start
 
-menu:
-    push %ebp
-    movl %esp, %ebp
-    # questo e lo spazio dedeicato all contatore del menu
+_start:
+    popl %ecx
+    popl %ecx
+    popl %ecx
+    pushl %ecx
+    call isSupervisor
+    addl $4,%esp
     cmpl $0, supervisor
     je loopArrow
     movl $7, limitOfMenu
@@ -72,11 +74,6 @@ noInput:
     movl $0, %eax
     movl $0, moreOption
     jmp loopArrow
-fine:
-    addl $4, %esp
-    movl %ebp, %esp
-    pop %ebp
-    ret
 
 
 

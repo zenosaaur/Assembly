@@ -3,18 +3,13 @@
     .global supervisor 
         supervisor: .long 0 
 
-
 .section .text
-    .global _start
-
-_start:
-    popl %ecx /*Scarto i primi due elementi 
-                dello Stack che contiene il numero 
-                di parametri e il comando ./eseguibile
-                */
-    popl %ecx
-adminMenager:
-    popl %ecx  /*Dominio: 2244(admin user), null*/
+	.global isSupervisor
+	.type isSupervisor, @function
+isSupervisor:
+    push %ebp
+    movl %esp, %ebp
+    movl 8(%ebp),%ecx
     testl %ecx, %ecx
     jz userRedirect
     movl (%ecx), %eax
@@ -22,14 +17,12 @@ adminMenager:
     je supervisorRedirect
 userRedirect:
     movl $0, supervisor
-	call menu
     jmp fine
 supervisorRedirect:
     movl $1, supervisor
-	call menu
     jmp fine
 
 fine:
-	movl $1, %eax
-	movl $0, %ebx
-	int $0x80
+    movl %ebp, %esp
+    pop %ebp
+    ret
