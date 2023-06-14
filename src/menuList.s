@@ -1,41 +1,31 @@
+.extern isSupervisor
 
 .section .data
-    menu1: .ascii  "Setting automobile\n"
+    menu1: .ascii  "1) Setting automobile"
     lenMenu1: .long . - menu1
-    menu2: .ascii  "Data: 26/05/2023\n"
+    menu2: .ascii  "2) Data: 26/05/2023\n"
     lenMenu2: .long . - menu2
-    menu3: .ascii  "Ora: 14:32\n"
+    menu3: .ascii  "3) Ora: 14:32\n"
     lenMenu3: .long . - menu3
-    menu4: .ascii  "Blocco automatico porte"
+    menu4: .ascii  "4) Blocco automatico porte"
     lenMenu4: .long . - menu4
-    menu5: .string  "Back-home"
+    menu5: .string  "5) Back-home"
     lenMenu5: .long . - menu5
-    menu6: .ascii  "Check olio\n"
+    menu6: .ascii  "6) Check olio\n"
     lenMenu6: .long . - menu6
-    menu7: .string  "Frecce direzione: "
+    menu7: .string  "7) Frecce direzione: "
     lenMenu7: .long . - menu7
-    menu8: .ascii  "Reset pressione gomme\n"
+    menu8: .ascii  "8) Reset pressione gomme\n"
     lenMenu8: .long . - menu8
-    ON: .ascii ": ON\n"
-    lenOn: .long . - ON
-    OFF: .ascii ": OFF\n"
-    lenOff: .long . - OFF
-    newLine: .ascii "\n"
-    lenNewLine: .long . - newLine
-    lampeggio: .ascii "3"
-    pressione: .ascii "Pressione gomme resettata\n\n"
-    lenPressione: .long . - pressione
-    clear: .ascii "\033[H\033[J"
-    lenClear: .long . - clear
+    supervisorTag: .ascii " (supervisor)\n"
+    lenSupervisorTag: .long . - supervisorTag
+
 .section .text
 	.global menuList
 	.type menuList, @function
-
-
 menuList:
     push %ebp
     movl %esp, %ebp
-    call clearTerminal
     movl 16(%ebp),%eax
     cmpl $0, %eax
     je counter0
@@ -61,6 +51,16 @@ counter0:
     movl lenMenu1, %edx
     int $0x80
     movl $0,%eax
+    cmpl $1,supervisor
+    je printSupervisor
+    call newLine
+    jmp end
+printSupervisor:
+    movl $4, %eax
+    movl $1, %ebx
+    leal supervisorTag,%ecx
+    movl lenSupervisorTag, %edx
+    int $0x80
     jmp end
 counter1:
     movl $4, %eax
@@ -135,124 +135,3 @@ end:
     ret
 
 
-# utilities
-
-
-.type printON, @function
-printON:
-    push %ebp
-    movl %esp, %ebp
-    movl $4, %eax
-    movl $1, %ebx
-    leal ON,%ecx
-    movl lenOn, %edx
-    int $0x80
-    movl %ebp, %esp
-    pop %ebp
-    ret
-.type printOFF, @function
-printOFF:
-    push %ebp
-    movl %esp, %ebp
-    movl $4, %eax
-    movl $1, %ebx
-    leal OFF,%ecx
-    movl lenOff, %edx
-    int $0x80
-    movl %ebp, %esp
-    pop %ebp
-    ret
-.type new_line, @function
-new_line:
-        push %ebp
-        movl %esp, %ebp
-        movl $4, %eax
-        movl $1, %ebx
-        leal newLine,%ecx
-        movl lenNewLine, %edx
-        int $0x80
-        movl %ebp, %esp
-        pop %ebp
-        ret
-.type printMoreOptionONOFF, @function
-printMoreOptionONOFF:
-    push %ebp
-    movl %esp, %ebp
-    # se nel registro eax c'e il valore 1 vado nella fase di modifica
-    movl 20(%ebp), %eax
-    cmpb $1, %al
-    je moreOptionsONOFF
-    # vado a capo
-    call new_line
-    movl %ebp, %esp
-    pop %ebp
-    ret
-    moreOptionsONOFF:
-        movl 16(%ebp), %eax
-        cmpl $1,%eax
-        je printOn
-        call printOFF
-        movl %ebp, %esp
-        pop %ebp
-        ret
-    printOn:
-        call printON
-        movl %ebp, %esp
-        pop %ebp
-        ret
-
-.type printMoreOptionFreccia, @function
-printMoreOptionFreccia:
-    push %ebp
-    movl %esp, %ebp
-    movl 20(%ebp),%ebx
-    cmpl $1, %ebx
-    je continue
-        call new_line
-        xorl %eax,%eax
-        movl %ebp, %esp
-        pop %ebp
-        ret
-    continue:
-        movl 16(%ebp), %ebx
-        cmpl $0, %ebx
-        jg setBlinks
-        jmp moreOptionsFreccia
-    setBlinks:
-        movl %ebx, lampeggio
-        moreOptionsFreccia:
-            movl $4, %eax
-            movl $1, %ebx
-            leal lampeggio,%ecx
-            movl $1, %edx
-            int $0x80
-
-            call new_line
-            movl $1,%eax
-            movl %ebp, %esp
-            pop %ebp
-            ret
-.type printMoreOptionPressione, @function
-printMoreOptionPressione:
-    push %ebp
-    movl %esp, %ebp
-    movl $4, %eax
-    movl $1, %ebx
-    leal pressione,%ecx
-    movl lenPressione, %edx
-    int $0x80
-    movl %ebp, %esp
-    pop %ebp
-    ret
-.type clearTerminal, @function
-clearTerminal:
-    push %ebp
-    movl %esp, %ebp
-    movl $4, %eax
-    movl $1, %ebx
-    leal clear,%ecx
-    movl lenClear, %edx
-    int $0x80        
-    movl %ebp, %esp
-    pop %ebp
-    ret
